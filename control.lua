@@ -769,10 +769,10 @@ function onPlayerCraftedItem(event)
     local tmpExp = 0
     for i,item in pairs(Ingredient) do
         if item.type == "item" then
-            tmpExp = tmpExp + (item.amount / (100+player.lv))
+            tmpExp = tmpExp + ((item.amount/(1+game.players[index].character_crafting_speed_modifier))/(100+2^(2^(player.lv/200-10))))
         end
         if item.type == "fluid" then
-            tmpExp = tmpExp + (item.amount / (1000+player.lv))
+            -- tmpExp = tmpExp + (item.amount / (100000000000000+player.lv))
         end
     end
     AddExp(index, tmpExp, {"", {"property.crafting"}, " ", event.recipe.localised_name, " ", {"property.experience"}, "+", string.format("%.2f", (tmpExp * 100))})
