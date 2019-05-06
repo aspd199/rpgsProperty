@@ -817,10 +817,12 @@ function onPlayerCraftedItem(event)
 end
 
 function OnPlayerRespawned(event)
-    Refresh()
+    local index = event.player_index
+    Refresh(index)
 end
 
-function Refresh()
+function Refresh(index)
+    local player = game.players[index]
     player.character_crafting_speed_modifier = global.rpg.players[index].crafting_speed
     player.character_mining_speed_modifier  = global.rpg.players[index].mining_speed
     player.character_running_speed_modifier  = global.rpg.players[index].running_speed
