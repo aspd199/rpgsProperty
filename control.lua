@@ -3,6 +3,9 @@
 护甲根据收到的伤害总量升级
 ]]
 
+require("function")
+
+
 local ExpTable =
 {
     {"small-biter", 0.01, 1},
@@ -48,7 +51,30 @@ function CreateGui(index)
         return
     end
     table.insert(global.players, player)
-    table.insert(global.rpg.players, {lv=1, exp=0, mp=100, point=0})
+    table.insert(
+        global.rpg.players,
+        {
+            lv=1,
+            exp=0,
+            mp=100,
+            point=0,
+            crafting_speed=0,
+            mining_speed=0,
+            running_speed=0,
+            build_distance=0,
+            item_drop_distance=0,
+            reach_distance=0,
+            resource_reach_distance=0,
+            item_pickup_distance=0,
+            loot_pickup_distance=0,
+            quickbar_count=0,
+            inventory_slots=0,
+            logistic_slot_count=0,
+            trash_slot_count=0,
+            following_robots=0,
+            health=0
+        }
+    )
     --local global.rpg.players[event.player_index].exp=0
     --/c game.player.gui.left.rpg.layout1.label1_4.caption = "000"    
     local root = player.gui.left.add{
@@ -767,7 +793,7 @@ function OnEntityDied(event)
         end
         for i, n in pairs(ExpTable) do
             if event.entity.name == n[1] then
-                AddExp(index, n[2], {"", {"property.killing"}, {"entity-name."..n[1]}, " ", {"property.experience"}, "+", n[2] * 100})
+                AddExp(index, n[2], {"", {"property.killing"}, " ", {"entity-name."..n[1]}, " ", {"property.experience"}, "+", n[2] * 100})
             end
         end
     end
@@ -787,7 +813,30 @@ function onPlayerCraftedItem(event)
             tmpExp = tmpExp + (item.amount / (1000+player.lv))
         end
     end
-    AddExp(index, tmpExp, {"", {"property.crafting"}, event.recipe.localised_name, " ", {"property.experience"}, "+", string.format("%.2f", (tmpExp * 100))})
+    AddExp(index, tmpExp, {"", {"property.crafting"}, " ", event.recipe.localised_name, " ", {"property.experience"}, "+", string.format("%.2f", (tmpExp * 100))})
+end
+
+function OnPlayerRespawned(event)
+    Refresh()
+end
+
+function Refresh()
+    player.character_crafting_speed_modifier = global.rpg.players[index].crafting_speed
+    player.character_mining_speed_modifier  = global.rpg.players[index].mining_speed
+    player.character_running_speed_modifier  = global.rpg.players[index].running_speed
+    player.character_build_distance_bonus  = global.rpg.players[index].build_distance
+    player.character_item_drop_distance_bonus  = global.rpg.players[index].item_drop_distance
+    player.character_reach_distance_bonus  = global.rpg.players[index].reach_distance
+    player.character_resource_reach_distance_bonus  = global.rpg.players[index].resource_reach_distance
+    player.character_item_pickup_distance_bonus  = global.rpg.players[index].item_pickup_distance
+    player.character_loot_pickup_distance_bonus  = global.rpg.players[index].loot_pickup_distance
+    player.quickbar_count_bonus  = global.rpg.players[index].quickbar_count
+    player.character_inventory_slots_bonus  = global.rpg.players[index].inventory_slots
+    player.character_logistic_slot_count_bonus  = global.rpg.players[index].logistic_slot_count
+    player.character_trash_slot_count_bonus  = global.rpg.players[index].trash_slot_count
+    player.character_maximum_following_robot_count_bonus  = global.rpg.players[index].following_robots
+    player.character_health_bonus  = global.rpg.players[index].health
+
 end
 
 function OnGuiClick(event)
@@ -812,139 +861,158 @@ function OnGuiClick(event)
     if event.element.name == "crafting_speed" then
         if global.rpg.players[index].point >=1 then
             global.rpg.players[index].point = global.rpg.players[index].point - 1
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].crafting_speed = global.rpg.players[index].crafting_speed + 0.01
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_crafting_speed_modifier = player.character_crafting_speed_modifier + 0.01
-            player.gui.left.rpg.layout3.label3_1_3.caption = player.character_crafting_speed_modifier*100
+            player.gui.left.rpg.layout3.label3_1_3.caption = string.format("%d", player.character_crafting_speed_modifier*100)
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "mining_speed" then
         if global.rpg.players[index].point >=1 then
             global.rpg.players[index].point = global.rpg.players[index].point - 1
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].mining_speed = global.rpg.players[index].mining_speed + 0.01
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_mining_speed_modifier = player.character_mining_speed_modifier + 0.01
-            player.gui.left.rpg.layout3.label3_2_3.caption = player.character_mining_speed_modifier*100
+            player.gui.left.rpg.layout3.label3_2_3.caption = string.format("%d", player.character_mining_speed_modifier*100)
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "running_speed" then
         if global.rpg.players[index].point >=1 then
             global.rpg.players[index].point = global.rpg.players[index].point - 1
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].running_speed = global.rpg.players[index].running_speed + 0.01
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_running_speed_modifier = player.character_running_speed_modifier + 0.01
-            player.gui.left.rpg.layout3.label3_3_3.caption = player.character_running_speed_modifier*100
+            player.gui.left.rpg.layout3.label3_3_3.caption = string.format("%d", player.character_running_speed_modifier*100)
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "build_distance" then
         if global.rpg.players[index].point >=5 then
             global.rpg.players[index].point = global.rpg.players[index].point - 5
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].build_distance = global.rpg.players[index].build_distance + 1
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_build_distance_bonus = player.character_build_distance_bonus + 1
             player.gui.left.rpg.layout3.label3_4_3.caption = player.character_build_distance_bonus
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "item_drop_distance" then
         if global.rpg.players[index].point >=5 then
             global.rpg.players[index].point = global.rpg.players[index].point - 5
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].item_drop_distance = global.rpg.players[index].item_drop_distance + 1
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_item_drop_distance_bonus = player.character_item_drop_distance_bonus + 1
             player.gui.left.rpg.layout3.label3_5_3.caption = player.character_item_drop_distance_bonus
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "reach_distance" then
         if global.rpg.players[index].point >=5 then
             global.rpg.players[index].point = global.rpg.players[index].point - 5
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].reach_distance = global.rpg.players[index].reach_distance + 1
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_reach_distance_bonus = player.character_reach_distance_bonus + 1
             player.gui.left.rpg.layout3.label3_6_3.caption = player.character_reach_distance_bonus
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "resource_reach_distance" then
         if global.rpg.players[index].point >=5 then
             global.rpg.players[index].point = global.rpg.players[index].point - 5
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].resource_reach_distance = global.rpg.players[index].resource_reach_distance + 1
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_resource_reach_distance_bonus = player.character_resource_reach_distance_bonus + 1
             player.gui.left.rpg.layout3.label3_7_3.caption = player.character_resource_reach_distance_bonus
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "item_pickup_distance" then
         if global.rpg.players[index].point >=5 then
             global.rpg.players[index].point = global.rpg.players[index].point - 5
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].item_pickup_distance = global.rpg.players[index].item_pickup_distance + 1
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_item_pickup_distance_bonus = player.character_item_pickup_distance_bonus + 1
             player.gui.left.rpg.layout3.label3_8_3.caption = player.character_item_pickup_distance_bonus
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "loot_pickup_distance" then
         if global.rpg.players[index].point >=5 then
             global.rpg.players[index].point = global.rpg.players[index].point - 5
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].loot_pickup_distance = global.rpg.players[index].loot_pickup_distance + 1
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_loot_pickup_distance_bonus = player.character_loot_pickup_distance_bonus + 1
             player.gui.left.rpg.layout3.label3_9_3.caption = player.character_loot_pickup_distance_bonus
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "quickbar_count" then
         if global.rpg.players[index].point >=80 then
             global.rpg.players[index].point = global.rpg.players[index].point - 80
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].quickbar_count = global.rpg.players[index].quickbar_count + 1
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.quickbar_count_bonus = player.quickbar_count_bonus + 1
             player.gui.left.rpg.layout3.label3_10_3.caption = player.quickbar_count_bonus
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "inventory_slots" then
         if global.rpg.players[index].point >=10 then
             global.rpg.players[index].point = global.rpg.players[index].point - 10
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].inventory_slots = global.rpg.players[index].inventory_slots + 1
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_inventory_slots_bonus = player.character_inventory_slots_bonus + 1
             player.gui.left.rpg.layout3.label3_11_3.caption = player.character_inventory_slots_bonus
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "logistic_slot_count" then
         if global.rpg.players[index].point >=8 then
             global.rpg.players[index].point = global.rpg.players[index].point - 8
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].logistic_slot_count = global.rpg.players[index].logistic_slot_count + 1
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_logistic_slot_count_bonus = player.character_logistic_slot_count_bonus + 1
             player.gui.left.rpg.layout3.label3_12_3.caption = player.character_logistic_slot_count_bonus
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "trash_slot_count" then
         if global.rpg.players[index].point >=8 then
             global.rpg.players[index].point = global.rpg.players[index].point - 8
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].trash_slot_count = global.rpg.players[index].trash_slot_count + 1
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_trash_slot_count_bonus = player.character_trash_slot_count_bonus + 1
             player.gui.left.rpg.layout3.label3_13_3.caption = player.character_trash_slot_count_bonus
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "following_robots" then
         if global.rpg.players[index].point >=20 then
             global.rpg.players[index].point = global.rpg.players[index].point - 20
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].following_robots = global.rpg.players[index].following_robots + 1
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_maximum_following_robot_count_bonus = player.character_maximum_following_robot_count_bonus + 1
             player.gui.left.rpg.layout3.label3_14_3.caption = player.character_maximum_following_robot_count_bonus
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     elseif event.element.name == "health" then
         if global.rpg.players[index].point >=1 then
             global.rpg.players[index].point = global.rpg.players[index].point - 1
-            player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
+            global.rpg.players[index].health = global.rpg.players[index].health + 1
+            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
             player.character_health_bonus = player.character_health_bonus + 1
             player.gui.left.rpg.layout3.label3_15_3.caption = player.character_health_bonus
         else
-            player.print({"property.nopoint"})
+            NoPoint(player)
         end
     end
+end
+
+function NoPoint(player)
+    FlyingText({"property.nopoint"}, player.position, { r = 255, g = 100, b = 100})
 end
 
 function gui_hide(event)
@@ -1067,9 +1135,15 @@ end
 function AddExp(index, Exp, Tips)
     local player = global.players[index]
     global.rpg.players[index].exp = global.rpg.players[index].exp + Exp
+    
+    local lvup = false
     while global.rpg.players[index].exp >= 1 do
+        lvup = true
         global.rpg.players[index].lv = global.rpg.players[index].lv + 1
         global.rpg.players[index].exp = global.rpg.players[index].exp - 1
+        -- lv up sound
+        FlyingText("升级！", player.position, { r = 255, g = 255, b = 100})
+        player.play_sound{path="utility/new_objective"}
         player.gui.left.rpg.layout1.label1_4.caption = {"property.lv", global.rpg.players[index].lv}
         global.rpg.players[index].point = global.rpg.players[index].point + 1
         player.gui.left.rpg.layout2.label2_2.caption =  global.rpg.players[index].point
@@ -1078,7 +1152,11 @@ function AddExp(index, Exp, Tips)
         end
     end
     player.gui.left.rpg.layout1.label1_3.value = global.rpg.players[index].exp
-    player.print(Tips)
+    -- player.print(Tips)
+    if not lvup then
+        FlyingText(Tips, player.position, { r = 50, g = 200, b = 50})
+    end
+
 end
 
 script.on_init(OnInit)
@@ -1089,5 +1167,7 @@ script.on_event(defines.events.on_robot_built_entity, OnBuiltEntity)
 script.on_event(defines.events.on_entity_died, OnEntityDied)
 script.on_event(defines.events.on_player_created, OnPlayerCreated)
 script.on_event(defines.events.on_player_crafted_item, onPlayerCraftedItem)
+-- script.on_event(defines.events.on_player_died, OnPlayerDied)
+script.on_event(defines.events.on_player_respawned, OnPlayerRespawned)
 script.on_event(defines.events.on_marked_for_deconstruction, OnMarkedForDeconstruction)
 script.on_event(defines.events.on_gui_click, OnGuiClick)
