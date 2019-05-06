@@ -67,7 +67,6 @@ function CreateGui(index)
             resource_reach_distance=0,
             item_pickup_distance=0,
             loot_pickup_distance=0,
-            quickbar_count=0,
             inventory_slots=0,
             logistic_slot_count=0,
             trash_slot_count=0,
@@ -143,7 +142,7 @@ function CreateGui(index)
         style = "RpgGUI_hide",
         tooltip = {"property.gui_hide"}
     }
-    Rpg_Gui_Hide.style.visible = false
+    Rpg_Gui_Hide.visible = false
     local Rpg_Gui_Show = button_frame.add{
         type = "button",
         name = "gui_show",
@@ -175,7 +174,7 @@ function CreateGui(index)
         name = "layout2",
         column_count = 3
     }
-    layout2.style.visible = false
+    layout2.visible = false
     local label2_1 = layout2.add{
         type = "label",
         name = "label2_1",
@@ -203,7 +202,7 @@ function CreateGui(index)
         name = "layout3",
         column_count = 6
     }
-    layout3.style.visible = false
+    layout3.visible = false
     local label3_1_1 = layout3.add{
         type = "label",
         name = "label3_1_1",
@@ -389,7 +388,7 @@ function CreateGui(index)
         caption = {"property.upgrade_button"}
     }
     
-     local label3_6_1 = layout3.add{
+    local label3_6_1 = layout3.add{
         type = "label",
         name = "label3_6_1",
         style = "caption_label",
@@ -426,7 +425,7 @@ function CreateGui(index)
         caption = {"property.upgrade_button"}
     }
     
-     local label3_7_1 = layout3.add{
+    local label3_7_1 = layout3.add{
         type = "label",
         name = "label3_7_1",
         style = "caption_label",
@@ -463,7 +462,7 @@ function CreateGui(index)
         caption = {"property.upgrade_button"}
     }
     
-     local label3_8_1 = layout3.add{
+    local label3_8_1 = layout3.add{
         type = "label",
         name = "label3_8_1",
         style = "caption_label",
@@ -500,7 +499,7 @@ function CreateGui(index)
         caption = {"property.upgrade_button"}
     }
     
-     local label3_9_1 = layout3.add{
+    local label3_9_1 = layout3.add{
         type = "label",
         name = "label3_9_1",
         style = "caption_label",
@@ -537,44 +536,7 @@ function CreateGui(index)
         caption = {"property.upgrade_button"}
     }
     
-     local label3_10_1 = layout3.add{
-        type = "label",
-        name = "label3_10_1",
-        style = "caption_label",
-        caption = {"property.quickbar_count_label"}
-    }
-    local label3_10_2 = layout3.add{
-        type = "label",
-        name = "label3_10_2",
-        caption = "+"
-    }
-    local label3_10_3 = layout3.add{
-        type = "label",
-        name = "label3_10_3",
-        caption = "0"
-    }
-    local label3_10_4 = layout3.add{
-        type = "label",
-        name = "label3_10_4",
-        style = "caption_label",
-        caption = {"property.unit_row"}
-    }
-    local label3_10_5 = layout3.add{
-        type = "label",
-        name = "label3_10_5",
-        style = "caption_label",
-        caption = "(80)"
-    }
-    label3_10_5.style.font_color = { r=1, g=0.6, b=0.6 }
-    local upgrade_button10 = layout3.add{
-        type = "button",
-        name = "quickbar_count",
-        parent = "slot_button",
-        --align = "right",
-        caption = {"property.upgrade_button"}
-    }
-    
-     local label3_11_1 = layout3.add{
+    local label3_11_1 = layout3.add{
         type = "label",
         name = "label3_11_1",
         style = "caption_label",
@@ -611,7 +573,7 @@ function CreateGui(index)
         caption = {"property.upgrade_button"}
     }
     
-     local label3_12_1 = layout3.add{
+    local label3_12_1 = layout3.add{
         type = "label",
         name = "label3_12_1",
         style = "caption_label",
@@ -648,7 +610,7 @@ function CreateGui(index)
         caption = {"property.upgrade_button"}
     }
     
-     local label3_13_1 = layout3.add{
+    local label3_13_1 = layout3.add{
         type = "label",
         name = "label3_13_1",
         style = "caption_label",
@@ -685,7 +647,7 @@ function CreateGui(index)
         caption = {"property.upgrade_button"}
     }
     
-     local label3_14_1 = layout3.add{
+    local label3_14_1 = layout3.add{
         type = "label",
         name = "label3_14_1",
         style = "caption_label",
@@ -722,7 +684,7 @@ function CreateGui(index)
         caption = {"property.upgrade_button"}
     }
     
-     local label3_15_1 = layout3.add{
+    local label3_15_1 = layout3.add{
         type = "label",
         name = "label3_15_1",
         style = "caption_label",
@@ -832,7 +794,6 @@ function Refresh(index)
     player.character_resource_reach_distance_bonus  = global.rpg.players[index].resource_reach_distance
     player.character_item_pickup_distance_bonus  = global.rpg.players[index].item_pickup_distance
     player.character_loot_pickup_distance_bonus  = global.rpg.players[index].loot_pickup_distance
-    player.quickbar_count_bonus  = global.rpg.players[index].quickbar_count
     player.character_inventory_slots_bonus  = global.rpg.players[index].inventory_slots
     player.character_logistic_slot_count_bonus  = global.rpg.players[index].logistic_slot_count
     player.character_trash_slot_count_bonus  = global.rpg.players[index].trash_slot_count
@@ -950,16 +911,6 @@ function OnGuiClick(event)
         else
             NoPoint(player)
         end
-    elseif event.element.name == "quickbar_count" then
-        if global.rpg.players[index].point >=80 then
-            global.rpg.players[index].point = global.rpg.players[index].point - 80
-            global.rpg.players[index].quickbar_count = global.rpg.players[index].quickbar_count + 1
-            player.gui.left.rpg.layout2.label2_2.caption = global.rpg.players[index].point
-            player.quickbar_count_bonus = player.quickbar_count_bonus + 1
-            player.gui.left.rpg.layout3.label3_10_3.caption = player.quickbar_count_bonus
-        else
-            NoPoint(player)
-        end
     elseif event.element.name == "inventory_slots" then
         if global.rpg.players[index].point >=10 then
             global.rpg.players[index].point = global.rpg.players[index].point - 10
@@ -1021,20 +972,20 @@ function gui_hide(event)
     local index = event.player_index
     local player = global.players[index]
     local RpgGUI = player.gui.left.rpg
-    RpgGUI.layout1.button_frame.gui_show.style.visible = true
-    RpgGUI.layout1.button_frame.gui_hide.style.visible = false
-    RpgGUI.layout2.style.visible = false
-    RpgGUI.layout3.style.visible = false
+    RpgGUI.layout1.button_frame.gui_show.visible = true
+    RpgGUI.layout1.button_frame.gui_hide.visible = false
+    RpgGUI.layout2.visible = false
+    RpgGUI.layout3.visible = false
 end
 
 function gui_show(event)
     local index = event.player_index
     local player = global.players[index]
     local RpgGUI = player.gui.left.rpg
-    RpgGUI.layout1.button_frame.gui_show.style.visible = false
-    RpgGUI.layout1.button_frame.gui_hide.style.visible = true
-    RpgGUI.layout2.style.visible = true
-    RpgGUI.layout3.style.visible = true
+    RpgGUI.layout1.button_frame.gui_show.visible = false
+    RpgGUI.layout1.button_frame.gui_hide.visible = true
+    RpgGUI.layout2.visible = true
+    RpgGUI.layout3.visible = true
 end
 
 function ClearPoint(event)
@@ -1110,7 +1061,6 @@ function gui_settings(event)
     player.character_reach_distance_bonus = 0
     player.character_item_pickup_distance_bonus = 0
     player.character_loot_pickup_distance_bonus = 0
-    player.quickbar_count_bonus = 0
     player.character_inventory_slots_bonus = 0
     player.character_logistic_slot_count_bonus = 0
     player.character_trash_slot_count_bonus = 0
@@ -1126,7 +1076,6 @@ function gui_settings(event)
     player.gui.left.rpg.layout3.label3_7_3.caption = 0
     player.gui.left.rpg.layout3.label3_8_3.caption = 0
     player.gui.left.rpg.layout3.label3_9_3.caption = 0
-    player.gui.left.rpg.layout3.label3_10_3.caption = 0
     player.gui.left.rpg.layout3.label3_11_3.caption = 0
     player.gui.left.rpg.layout3.label3_12_3.caption = 0
     player.gui.left.rpg.layout3.label3_13_3.caption = 0

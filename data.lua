@@ -1,6 +1,15 @@
 local gui_style = data.raw["gui-style"].default
 
 local function button_png(xpos, ypos)
+  return
+  {
+    border = 1,
+    filename = "__rpgsProperty__/graphics/gui.png",
+    position = {xpos, ypos},
+    size = 16,
+    scale = 1
+  }
+--[[
     return {
         type = "monolith",
 
@@ -18,6 +27,7 @@ local function button_png(xpos, ypos)
             y = ypos,
         },
     }
+]]
 end
 
 gui_style.RpgGUI_button_with_icon = {
