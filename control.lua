@@ -35,6 +35,11 @@ function OnLoad()
     OnInit()
 end
 
+function OnPlayerCreated(event)
+    local index = event.player_index
+    CreateGui(index)
+end
+
 function CreateGui(index)
 
     -- local index = event.player_index
@@ -1082,7 +1087,7 @@ script.on_event(defines.events.on_tick, OnTick)
 script.on_event(defines.events.on_built_entity, OnBuiltEntity)
 script.on_event(defines.events.on_robot_built_entity, OnBuiltEntity)
 script.on_event(defines.events.on_entity_died, OnEntityDied)
-script.on_event(defines.events.on_player_created, function() CreateGui(event.player_index) end)
+script.on_event(defines.events.on_player_created, OnPlayerCreated)
 script.on_event(defines.events.on_player_crafted_item, onPlayerCraftedItem)
 script.on_event(defines.events.on_marked_for_deconstruction, OnMarkedForDeconstruction)
 script.on_event(defines.events.on_gui_click, OnGuiClick)
