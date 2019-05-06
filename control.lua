@@ -1011,11 +1011,10 @@ function ClearPoint(event)
     local tips_title = tips_table.add{
         type = "label",
         name = "tips_title",
-        style = "caption_label",
+        style = "large_caption_label",
         caption = {"property.tips_title"}
     }
     tips_title.style.font_color = {r=0.94, g=0.89, b=0.69}
-    tips_title.style.font = "default-frame"
     tips_title.style.minimal_width = 200
     local tips_caption = tips_table.add{
         type = "label",
