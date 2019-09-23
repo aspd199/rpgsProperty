@@ -28,9 +28,9 @@ function OnInit()
         global.rpg={}
         global.players={}
         global.rpg.players={}
-        for i=1,#game.players do
-            CreateGui(i)
-        end
+        -- for i=1,#game.players do
+            -- CreateGui(i)
+        -- end
     end
 end
 
